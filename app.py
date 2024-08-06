@@ -31,7 +31,7 @@ def handle_message(data):
 
 @app.route('/')
 def index():
-    return render_template('WebSocketClient.html')
+    return render_template('join_room.html')
 
 @app.route('/get_all_messages', methods=['GET'])
 def get_all_messages():
