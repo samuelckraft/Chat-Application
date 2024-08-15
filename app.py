@@ -16,16 +16,18 @@ def handle_disconnect():
 @socketio.on('message')
 def handle_message(data):
     try:
-        data = json.loads(data)
-        user = data['user']
+        print(data)
+        # data = json.loads(data)
+        user = data['user_id']
+        print(user)
         message = data['message']
-        print(f'Received message from {user}: {message}')
+        print(f'Received message from {user}: {data}')
         
         if user not in message_storage:
             message_storage[user] = []
         message_storage[user].append(message)
         
-        socketio.emit('message', data)
+        socketio.emit('message', f"{user}: {message}")
     except (KeyError) as e:
         print(f'Error processing message: {e}')
 
@@ -35,7 +37,7 @@ def index():
 
 @app.route('/get_all_messages', methods=['GET'])
 def get_all_messages():
-    user = request.args.get('user')
+    user = request.args.get('user_id')
     if user in message_storage:
         print({'messages': message_storage[user]})
     else:

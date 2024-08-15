@@ -10,33 +10,62 @@
 
 <body>
     
-    <h1>Flask-SocketIO Chat</h1>
+    <h1>WebSocket Chat</h1>
+    <label for="room">Room:</label>
+    <input type="text" id="room" autocomplete="off" placeholder="Enter room name">
+    <button id="join-room" type="submit">Join Room</button>
+    
+    <label for="user">User:</label>
+    <input type="text" id="user" autocomplete="off" placeholder="Enter username">
+    <button id="add-user" type="submit">Add user</button>
+
+
     <ul id="messages"></ul>
+    
     <form id="message-form">
-        <input type="text" id="message-input" autocomplete="off">
+        <input type="text" id="message-input" autocomplete="off" placeholder="Type your message here...">
+        <input type="text" id="user-input" autocomplete="off" placeholder="Enter username">
         <button type="submit">Send</button>
     </form>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.min.js"></script>
     <script>
-        const socket = io();
+        let socket;
         const form = document.getElementById('message-form');
         const input = document.getElementById('message-input');
         const messages = document.getElementById('messages');
+        const roomInput = document.getElementById('room');
+        const joinButton = document.getElementById('join-room');
+        const user = document.getElementById('user-input');
+
+        joinButton.addEventListener('click', function() {
+            const room = roomInput.value.trim();
+            if (room) {
+                if (socket) {
+                    socket.disconnect();
+                }
+                socket = io.connect(`http://localhost:5000?room=${room}`);
+
+                socket.on('message', function(message) {
+                    const li = document.createElement('li');
+                    li.textContent = message;
+                    messages.appendChild(li);
+                });
+            }
+        });
 
         form.addEventListener('submit', function(event) {
             event.preventDefault();
             const message = input.value.trim();
-            if (message != '') {
-                socket.emit('message', message);
-                input.value = ''
+            const user_id = user.value.trim();
+            console.log(message);
+            console.log(user_id);
+            if (message && socket) {
+                socket.emit('message', {message, user_id});
+                input.value = '';
+                user.value = '';
             }
         });
-
-        socket.on('message', function(message) {
-            const li = document.createElement('li')
-            li.textContent = message
-            messages.appendChild(li)
-        })
     </script>
 </body>
 </html>
