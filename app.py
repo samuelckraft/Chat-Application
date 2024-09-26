@@ -17,9 +17,7 @@ def handle_disconnect():
 def handle_message(data):
     try:
         print(data)
-        # data = json.loads(data)
         user = data['user_id']
-        print(user)
         message = data['message']
         print(f'Received message from {user}: {data}')
         

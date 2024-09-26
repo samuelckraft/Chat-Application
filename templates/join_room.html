@@ -6,26 +6,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width-devide-width, initial-scale-1.0">
     <title>Flask-SocketIO Chat</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 
 <body>
     
-    <h1>WebSocket Chat</h1>
+    <h1 id="header">WebSocket Chat</h1>
     <label for="room">Room:</label>
     <input type="text" id="room" autocomplete="off" placeholder="Enter room name">
-    <button id="join-room" type="submit">Join Room</button>
-    
-    <label for="user">User:</label>
-    <input type="text" id="user" autocomplete="off" placeholder="Enter username">
-    <button id="add-user" type="submit">Add user</button>
+    <button id="join-room">Join Room</button>
 
-
+    <div id="room-title"></div>
     <ul id="messages"></ul>
     
     <form id="message-form">
-        <input type="text" id="message-input" autocomplete="off" placeholder="Type your message here...">
-        <input type="text" id="user-input" autocomplete="off" placeholder="Enter username">
-        <button type="submit">Send</button>
+        <div>
+            <span class="input-group-text" id="input-group-left-example">@</span>
+            <input type="text" id= "user-input" class="form-control" placeholder="Username" aria-label="Enter username..." aria-describedby="input-group-left">
+
+            <p></p>
+            <span class="input-group-text" id="input-group-left-example">Message</span>
+            <input type="text" id="message-input" class="form-control" placeholder="Type your message here..." aria-describedby="input-group-left">
+
+            <button type="submit">Send</button>
+        </div>
+        
     </form>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.min.js"></script>
@@ -37,6 +43,9 @@
         const roomInput = document.getElementById('room');
         const joinButton = document.getElementById('join-room');
         const user = document.getElementById('user-input');
+        const room_name = document.getElementById('room');
+        const header = document.getElementById('header');
+        const room_title = document.getElementById('room-title');
 
         joinButton.addEventListener('click', function() {
             const room = roomInput.value.trim();
@@ -46,6 +55,12 @@
                 }
                 socket = io.connect(`http://localhost:5000?room=${room}`);
 
+                socket.on('submit', function(room) {
+                    const title = document.createElement('h2');
+                    title.textContent = room;
+                    console.log(title);
+                    room_title.append(title);
+                });
                 socket.on('message', function(message) {
                     const li = document.createElement('li');
                     li.textContent = message;
@@ -58,8 +73,6 @@
             event.preventDefault();
             const message = input.value.trim();
             const user_id = user.value.trim();
-            console.log(message);
-            console.log(user_id);
             if (message && socket) {
                 socket.emit('message', {message, user_id});
                 input.value = '';
