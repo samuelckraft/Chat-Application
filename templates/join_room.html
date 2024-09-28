@@ -13,12 +13,9 @@
 <body>
     
     <h1 id="header">WebSocket Chat</h1>
-    <label for="room">Room:</label>
-    <input type="text" id="room" autocomplete="off" placeholder="Enter room name">
-    <button id="join-room">Join Room</button>
-
-    <div id="room-title"></div>
-    <ul id="messages"></ul>
+    <span class="input-group-text" id="input-group-left-example">Room</span>
+    <input type="text" id="room" autocomplete="off" placeholder="Enter room name" class="form-control" aria-describedby="input-group-left">
+    <button id="join-room" class="btn btn-light btn-outline-dark mt-2" data-mdb-ripple-init data-mdb-ripple-color="dark">Join Room</button>
     
     <form id="message-form">
         <div>
@@ -29,11 +26,15 @@
             <span class="input-group-text" id="input-group-left-example">Message</span>
             <input type="text" id="message-input" class="form-control" placeholder="Type your message here..." aria-describedby="input-group-left">
 
-            <button type="submit">Send</button>
+            <button type="submit" class="btn btn-light btn-outline-dark mt-2" data-mdb-ripple-init data-mdb-ripple-color="dark" >Send</button>
         </div>
         
     </form>
-    
+
+    <div id="room-title" class="p-5 text-center bg-body-tertiary"></div>
+    <div class="list-group list-group-light">
+    <ul id="messages"></ul>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.2/socket.io.min.js"></script>
     <script>
         let socket;

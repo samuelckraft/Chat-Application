@@ -35,7 +35,7 @@ def index():
 
 @app.route('/get_all_messages', methods=['GET'])
 def get_all_messages():
-    user = request.args.get('user_id')
+    user = request.args.get('username')
     if user in message_storage:
         print({'messages': message_storage[user]})
     else:
