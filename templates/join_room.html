@@ -49,18 +49,26 @@
 
         joinButton.addEventListener('click', function() {
             const room = roomInput.value.trim();
-            if (room) {
-                if (socket) {
-                    socket.disconnect();
-                }
-                socket = io.connect(`http://localhost:5000?room=${room}`);
 
-                socket.on('submit', function(room) {
+
+            if (room) {
+                if (!document.getElementById('room-header')) {
                     const title = document.createElement('h2');
                     title.textContent = room;
-                    console.log(title);
-                    room_title.append(title);
-                });
+                    title.id = 'room-header';
+                    room_title.appendChild(title);
+
+                    const newUrl = `${window.location.origin}?room=${room}`;
+                    history.pushState(null, '', newUrl);
+                } else {
+                    const existingRoomName = document.getElementById('room-header').textContent;
+                    alert(`You are already in the room "${existingRoomName}". Please open a new tab to join a different room.`);
+                    return;
+                }
+
+            // Establish WebSocket connection with the room
+            socket = io.connect(`http://localhost:5000?room=${room}`);
+            
                 socket.on('message', function(message) {
                     const li = document.createElement('li');
                     li.textContent = message;
